@@ -89,3 +89,4 @@ target/
 .mypy_cache/
 
 hidden-data.txt
+s3_local/
