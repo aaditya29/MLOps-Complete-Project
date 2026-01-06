@@ -3,7 +3,8 @@ import yaml
 import logging
 import numpy as np
 import pandas as pd
-from src.logger import logging
+import logging
+import src.logger
 from sklearn.model_selection import train_test_split
 
 
@@ -74,3 +75,29 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
         # Log error message
         logging.error('Unexpected error occurred while saving the data: %s', e)
         raise
+
+
+def main():
+    try:
+        # params = load_params(params_path='params.yaml')
+        # test_size = params['data_ingestion']['test_size']
+        test_size = 0.2
+
+        df = load_data(
+            data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
+        # s3 = s3_connection.s3_operations("bucket-name", "accesskey", "secretkey")
+        # df = s3.fetch_file_from_s3("data.csv")
+
+        final_df = preprocess_data(df)  # Preprocess the data
+        train_data, test_data = train_test_split(
+            # Split the data into training and testing sets
+            final_df, test_size=test_size, random_state=42)
+        # Save the processed data
+        save_data(train_data, test_data, data_path='./data')
+    except Exception as e:
+        logging.error('Failed to complete the data ingestion process: %s', e)
+        print(f"Error: {e}")
+
+
+if __name__ == '__main__':
+    main()
