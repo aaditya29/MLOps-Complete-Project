@@ -36,3 +36,40 @@ def preprocess_dataframe(df, col='txt'):
         # Lemmatization
         text = " ".join([lemmatizer.lemmatize(word) for word in text.split()])
         return text
+
+    # apply preprocessing to the specified column
+    df[col] = df[col].apply(preprocess_text)
+    df = df.dropna(subset=[col])
+    logging.info("Data pre-processing completed")
+    return df
+
+
+def main():
+    try:
+        # Fetch the data from data/raw
+        train_data = pd.read_csv('./data/raw/train.csv')
+        test_data = pd.read_csv('./data/raw/test.csv')
+        logging.info('data loaded properly')
+
+        # Transform the data
+        train_processed_data = preprocess_dataframe(train_data, 'review')
+        test_processed_data = preprocess_dataframe(test_data, 'review')
+
+        # Store the data inside data/processed
+        data_path = os.path.join("./data", "interim")
+        os.makedirs(data_path, exist_ok=True)
+
+        train_processed_data.to_csv(os.path.join(
+            data_path, "train_processed.csv"), index=False)
+        test_processed_data.to_csv(os.path.join(
+            data_path, "test_processed.csv"), index=False)
+
+        logging.info('Processed data saved to %s', data_path)
+    except Exception as e:
+        logging.error(
+            'Failed to complete the data transformation process: %s', e)
+        print(f"Error: {e}")
+
+
+if __name__ == '__main__':
+    main()
