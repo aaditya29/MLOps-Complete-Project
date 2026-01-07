@@ -90,3 +90,5 @@ target/
 
 hidden-data.txt
 s3_local/
+
+models/
