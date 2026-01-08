@@ -36,7 +36,7 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray) -> LogisticRegression:
 def save_model(model, file_path: str) -> None:
     try:
         with open(file_path, 'wb') as file:
-            pickle.dump(model, file)
+            pickle.dump(model, file)  # save the trained model
         logging.info('Model saved to %s', file_path)
     except Exception as e:
         logging.error('Error occurred while saving the model: %s', e)
@@ -47,6 +47,7 @@ def main():
     try:
 
         train_data = load_data('./data/processed/train_bow.csv')
+        # x_train is all columns except last
         X_train = train_data.iloc[:, :-1].values
         y_train = train_data.iloc[:, -1].values
 
