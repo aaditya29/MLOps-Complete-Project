@@ -44,3 +44,48 @@ def load_data(file_path: str) -> pd.DataFrame:
         logging.error(
             'Unexpected error occurred while loading the data: %s', e)
         raise
+
+
+def evaluate_model(clf, X_test: np.ndarray, y_test: np.ndarray) -> dict:
+    """Evaluate the model and return the evaluation metrics."""
+    try:
+        y_pred = clf.predict(X_test)
+        y_pred_proba = clf.predict_proba(X_test)[:, 1]
+
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        auc = roc_auc_score(y_test, y_pred_proba)
+
+        metrics_dict = {
+            'accuracy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'auc': auc
+        }
+        logging.info('Model evaluation metrics calculated')
+        return metrics_dict
+    except Exception as e:
+        logging.error('Error during model evaluation: %s', e)
+        raise
+
+
+def save_metrics(metrics: dict, file_path: str) -> None:
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(metrics, file, indent=4)
+        logging.info('Metrics saved to %s', file_path)
+    except Exception as e:
+        logging.error('Error occurred while saving the metrics: %s', e)
+        raise
+
+
+def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
+    try:
+        model_info = {'run_id': run_id, 'model_path': model_path}
+        with open(file_path, 'w') as file:
+            json.dump(model_info, file, indent=4)
+        logging.debug('Model info saved to %s', file_path)
+    except Exception as e:
+        logging.error('Error occurred while saving the model info: %s', e)
+        raise
